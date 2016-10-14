@@ -1,7 +1,6 @@
 <?php
 
-require __DIR__ . '/vendor/autoload.php';
-
+namespace ISAudit;
 
 /**
  * Audit Class
@@ -13,4 +12,7 @@ class Audit extends infusionsoft
     {
         # code...
     }
+
+
+
 }
