@@ -1,5 +1,8 @@
 {
     "require": {
         "infusionsoft/php-sdk": "1.2.*"
+    },
+    "autoload": {
+        "psr-4": {"ISAudit\\": "src/"}
     }
 }
