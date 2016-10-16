@@ -13,15 +13,19 @@ $infusionsoft = new \Infusionsoft\Infusionsoft(array(
 ));
 
 
+/*
+
 // If the serialized token is available in the session storage, we tell the SDK
 // to use that token for subsequent requests.
 if (isset($_SESSION['token'])) {
     $infusionsoft->setToken(unserialize($_SESSION['token']));
 }
 
+*/
+
 // If we are returning from Infusionsoft we need to exchange the code for an
 // access token.
-if (isset($_GET['code']) and !$infusionsoft->getToken()) {
+if (isset($_GET['code']) ) {
     $accessToken = $infusionsoft->requestAccessToken($_GET['code']);
 
     $token = new Token();
@@ -60,9 +64,17 @@ $selectedFields = array('Name', 'Label', 'DataType', 'Id');
 $fields = $infusionsoft->data()->query($table, $limit, $page, $queryData, $selectedFields, $orderBy, $ascending);
 
 
+$reportFields = array();
+
+
 echo '<pre>';
 //print_r($fields);
 
+
+
+foreach($fields as $field){
+	$reportFields[$field['Name']] = $field;
+}
 
 
 echo '<h2>You are using <i>'.count($fields) . '</i> out of your 100 custom fields</h2>';
@@ -74,11 +86,17 @@ $queryData = array('Id' => '%');
 
 $totalContats = $infusionsoft->data()->count($table, $queryData);
 
-echo '<h2>You have '.$totalContats.' total contants</h2>';
 
+
+
+
+echo '<h2>You have '.$totalContats.' total contants</h2>';
 
 echo '<ul>';
 
+
+
+/*
 foreach($fields as $field){
 	
 	
@@ -91,10 +109,52 @@ foreach($fields as $field){
 	echo '<li> <p><b>'.$field['Label'].'</b> is used by '. number_format((  ((int)$contctsWithData / (int)$totalContats) * 100), 5).'% of your contacts</p><p>'.$contctsWithData.' contacts with data</p></li>';
 	
 }
-
+*/
 
 
 echo '</ul>';
 
 
+
+
+
+//Get all webform Ids
+
+
+$webformIds = $infusionsoft->webForms()->getMap();
+
+
+
+echo '<p>This checks fields on Campaign Builder :: Webforms, Internal Forms and Landing pages</p>';
+//print_r($webformIds);
+
+
+//Loop though and check html for custom fields
+foreach($webformIds as $webformId => $webformName){
+	
+	
+	$formHTML = $infusionsoft->webForms()->getHTML($webformId);
+		
+	//echo '<textarea>'.$formHTML.'</textarea>';
+		
+	//look for our customfields
+	
+	foreach($reportFields as $reportField){
+		
+		$pos = strpos($formHTML, $reportField['Name']);
+		
+		
+		//$pos sould be === compared because it could be at the start of a string but in this case I know it wont so I am skipping that
+		if($pos){
+			$reportFields[$reportField['Name']]['webforms'] .= $webformName.', ';
+		}
+		
+	}
+	
+}
+
+
+
+
+print_r($reportFields);
 
