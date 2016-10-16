@@ -2,3 +2,4 @@
 .env
 creds.php
 oauth-is.db
+.DS_Store
