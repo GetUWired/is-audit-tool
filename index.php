@@ -5,8 +5,8 @@ namespace ISAudit;
 require __DIR__ . '/vendor/autoload.php';
 
 $infusionsoft = new \Infusionsoft\Infusionsoft(array(
-    'clientId' => '336yxd4usjmaf5zuazrwjck5',
-    'clientSecret' => 'hpNky5h8VY',
+    'clientId' => 'xxxx',
+    'clientSecret' => 'xxxx',
     'redirectUri' => 'http://localhost:8888',
 ));
 
