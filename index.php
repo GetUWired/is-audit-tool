@@ -47,7 +47,7 @@ if ($infusionsoft->getToken()) {
 //Lets do some work
 
 
-//Grab ALL custom Fields
+//Grab ALL custom Fields 
 
 $table = 'DataFormField';
 $limit = 200;
@@ -78,7 +78,7 @@ foreach($fields as $field){
 
 
 echo '<h2>You are using <i>'.count($fields) . '</i> out of your 100 custom fields</h2>';
-
+	
 
 
 $table = 'Contact';
@@ -96,20 +96,25 @@ echo '<ul>';
 
 
 
-/*
+
 foreach($fields as $field){
-
-
+	
+	
 	$table = 'Contact';
 	$queryData = array('_'.$field['Name'] => '%');
 
 	$contctsWithData = $infusionsoft->data()->count($table, $queryData);
-
-
-	echo '<li> <p><b>'.$field['Label'].'</b> is used by '. number_format((  ((int)$contctsWithData / (int)$totalContats) * 100), 5).'% of your contacts</p><p>'.$contctsWithData.' contacts with data</p></li>';
-
+	
+	$contactPercent = number_format((  ((int)$contctsWithData / (int)$totalContats) * 100), 5);
+	
+	$reportFields[$field['Name']]['totalContacts'] = $contctsWithData;
+	$reportFields[$field['Name']]['contactPercent'] = $contactPercent.'%';
+	
+	
+	//echo '<li> <p><b>'.$field['Label'].'</b> is used by '. number_format((  ((int)$contctsWithData / (int)$totalContats) * 100), 5).'% of your contacts</p><p>'.$contctsWithData.' contacts with data</p></li>';
+	
 }
-*/
+
 
 
 echo '</ul>';
@@ -131,29 +136,33 @@ echo '<p>This checks fields on Campaign Builder :: Webforms, Internal Forms and 
 
 //Loop though and check html for custom fields
 foreach($webformIds as $webformId => $webformName){
-
-
+	
+	
 	$formHTML = $infusionsoft->webForms()->getHTML($webformId);
-
+		
 	//echo '<textarea>'.$formHTML.'</textarea>';
-
+		
 	//look for our customfields
-
+	
 	foreach($reportFields as $reportField){
-
+		
 		$pos = strpos($formHTML, $reportField['Name']);
-
-
+		
+		
 		//$pos sould be === compared because it could be at the start of a string but in this case I know it wont so I am skipping that
 		if($pos){
 			$reportFields[$reportField['Name']]['webforms'] .= $webformName.', ';
 		}
-
+		
 	}
-
+	
 }
 
 
+usort($reportFields, function($a, $b) {
+    return $b['totalContacts'] - $a['totalContacts'];
+});
 
 
 print_r($reportFields);
+
