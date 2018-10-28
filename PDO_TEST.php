@@ -1,4 +1,6 @@
 <?php
+/*This is a working example of PDO, here we are looking at the advantages over MySQLi if any /*
+
   try
   {
     //open the database
