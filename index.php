@@ -166,3 +166,4 @@ usort($reportFields, function($a, $b) {
 
 print_r($reportFields);
 
+?>
